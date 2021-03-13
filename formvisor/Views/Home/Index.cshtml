@@ -1,0 +1,941 @@
+﻿@using System.Configuration
+@using System.Text
+<head>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8">
+</head>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string id = ViewBag.InstanceId;
+    var stringHtml = "";
+
+    //var ruteForm = "https://localhost:44382/Form/?InstanceId=" + id;
+    var ruteForm = "https://localhost:44358/Form/?InstanceId=" + id;
+
+    if (HttpContext.Current.Request.Url.Host.ToLower() != "localhost")
+    {
+        ruteForm = ViewBag.Parameters.urlForm + "/Form/?InstanceId=" + id;
+    }
+
+    var client = new WebClient { Encoding = Encoding.UTF8 };
+
+    stringHtml = client.DownloadString(ruteForm);
+}
+
+@Html.Raw(client.DownloadString(ruteForm))
+
+<div class="pull-right" style="margin-bottom: 30px;">
+    <div class="pull-right">
+        <button id="cmdGuardar" type="button" class="btn btn-primary tb">Guardar</button>
+        @*<button id="cmdPreview" type="button" class="btn btn-info tb">Vista previa</button>*@
+        @*<button id="cmdEliminar" type="button" class="btn btn-danger tb">Eliminar</button>*@
+        <button id="cmdEnviar" type="button" class="btn btn-success tb">Firmar y enviar</button>
+        @*<button id="cmdAcuse" type="button" class="btn btn-success tb">Acuse de recepción</button>*@
+        <button id="cmdCerrar" type="button" class="btn btn-default tb">Cerrar</button>
+        @*<button id="cmdDesistimiento" type="button" class="btn btn-primary tb" hidden="hidden">Desistir trámite</button>*@
+    </div>
+</div>
+
+@section scripts_iniciales {
+    <script>
+        var urlTracking = '@ConfigurationManager.AppSettings["UrlTracking"]';
+        var urlApiTracking = '@ConfigurationManager.AppSettings["urlApiTracking"]';
+        var urlFormViewer = '@ConfigurationManager.AppSettings["UrlFormViewer"]';
+        var urlVerify = '@ConfigurationManager.AppSettings["UrlVerify"]';
+
+        $(document).ready(function() {
+            var form = $('#form').uForm();
+
+            var configurationForm =
+            {
+                //PROD FONACOT
+                "WebForm": "https://form.serift8-qa.ift.org.mx",
+                "ApiBox": "https://apifonacotbox.azurewebsites.net",
+                "ApiTemplate": "https://apifonacottemplate.azurewebsites.net",
+                "WebVerify": "https://verificacion.fonacot.gob.mx",
+                //"ApiForm": "https://form-api.azurewebsites.net",
+                "ApiForm": "https://form-api.serift8-qa.ift.org.mx",
+                "ApiTracking": "https://apifonacottracking.azurewebsites.net",
+                "ApiGoogleMaps": "https://maps.googleapis.com",
+                "DataKeyGoogleMaps": "AIzaSyDaDLmzkeSXkntekM_90EDqg1ysz_wZlYU",
+                "ApiSepomex": "https://apikaraktools.azurewebsites.net/",
+                "DataKeySepomex": "187ec2f99a0b4917b66154316243710e",
+                "ApiIntegration": "https://apifonacotintegration.azurewebsites.net",
+                "WebIdentityRedirect": "https://wapfonacotidentity.azurewebsites.net"
+            };
+
+            var jsonPreload = {
+                configurationForm: configurationForm,
+                Preload: @ViewBag.Preload,
+                ObjectJson:
+                {
+                    Configuration: {
+                        InstanceId: "@ViewBag.InstanceId",
+                        Perfil: "Interesado",
+                        eFirma: null
+                    },
+                    UserContent: {
+                        codigoPostalCTField: "61800",
+                        domicilioCTField: "CERRADA DE PORTUGAL 60 SANTA CLARA DEL C",
+                        localidadCTField: "SALVADOR ESCALANTE MICHOACAN DE OCAMPO",
+                        municipioCTField: "K84",
+                        nombreCTField: "PABLO ANGEL RAMIREZ",
+                        numeroRegistroPatronalField: null,
+                        registroPatronalField: "K8410825102",
+                        rfcCTField: "HEGT7610034S2",
+                        totalEventualesField: 0,
+                        totalEventualesFieldSpecified: true,
+                        totalEventualesCampoField: 0,
+                        totalEventualesCampoFieldSpecified: true,
+                        totalEventualesUrbanosField: 0,
+                        totalEventualesUrbanosFieldSpecified: true,
+                        totalPermanentesField: 0,
+                        totalPermanentesFieldSpecified: true,
+                        PropertyChanged: null
+                    },
+                    Empresa: {
+                        RegistroPatronal: "2518646544",
+                        NumeroCliente: "3349003790",
+                        RazonSocial: "Fulanito SA de CV",
+                        RFC: "DVDS840522WE3",
+                        Nombre: "JAIME",
+                        PrimerApellido: "PEREZ",
+                        SegundoApellido: "TENORIO",
+                        FechaRecepcion: "11/02/2019",
+                        Domicilio: {
+                            Calle: "San Valentin",
+                            NumeroExterior: "866",
+                            NumeroInterior: "",
+                            CodigoPostal: "04600",
+                            EntidadFederativa: "CDMX",
+                            MunicipioAlcaldia: "Coyoacan",
+                            Colonia: "Sta Úrsula"
+                        },
+                        DocumentosLegales: [
+                            {
+                                TipoDocumento: "Documento Legal",
+                                Descripcion: "Acta constitutiva",
+                                FechaExpiracion: "No aplica",
+                                Documento: {
+                                    OriginalName: "ActaContitutiva.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: true,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Fecha especifica" },
+                                    FechaExpiracion: "01/01/2020",
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Documento Legal",
+                                Descripcion: "RFC",
+                                FechaExpiracion: "No Aplica",
+                                Documento: {
+                                    OriginalName: "FulanitoRFC.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Permanente" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion oficial",
+                                Descripcion: "Pasaporte",
+                                FechaExpiracion: "23/09/2021",
+                                Documento: {
+                                    OriginalName: "PasaporteMauricio.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Fecha especifica" },
+                                    FechaExpiracion: "01/01/2020",
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }
+                        ]
+                    },
+                    Ventanilla: {},
+                    Interesado: {
+                        Nombre: "MARTIN",
+                        PrimerApellido: "HERNANDEZ",
+                        SegundoApellido: "PEREZ",
+                        RFC: "WEDE157896WE3",
+                        CURP: "IERU784965MDMDSL01",
+                        Domicilio: {
+                            Calle: "Juan Sanchez Azcona",
+                            NumeroExterior: "529",
+                            NumeroInterior: "",
+                            CodigoPostal: "03020",
+                            EntidadFederativa: "CDMX",
+                            MunicipioAlcaldia: "Benito Juarez",
+                            Colonia: "Narvarte Poniente"
+                        },
+                        Documentos: [
+                            {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "INE",
+                                FechaExpiracion: "10/10/2021",
+                                Documento: {
+                                    OriginalName: "INE.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Fecha especifica" },
+                                    FechaExpiracion: "01/01/2020",
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "CURP",
+                                FechaExpiracion: "No Aplica",
+                                Documento: {
+                                    OriginalName: "CURP.jpg",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Periodica" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: {
+                                        UnidadTiempo: { id: "Mes(es)" },
+                                        Cantidad: 2
+                                    }
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "RFC",
+                                FechaExpiracion: "No Aplica",
+                                Documento: {
+                                    OriginalName: "rfc.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Permanente" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }
+                        ]
+                    },
+                    Adicional: {
+                        Nombre: "Adicional Claudia",
+                        RFC: "CKDI157896WE3",
+                        CURP: "CKDI784965MDMDSL01",
+                        Domicilio: {
+                            Calle: "Puente de piedra",
+                            NumeroExterior: "72",
+                            NumeroInterior: "",
+                            CodigoPostal: "14050",
+                            EntidadFederativa: "CDMX",
+                            MunicipioAlcaldia: "Tlalpan",
+                            Colonia: "Toriello Guerra"
+                        },
+                        DocumentosPersonales: [
+                            {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "INE",
+                                FechaExpiracion: "10/10/2021",
+                                Documento: {
+                                    OriginalName: "INE.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Fecha especifica" },
+                                    FechaExpiracion: "01/01/2020",
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "CURP",
+                                FechaExpiracion: "No Aplica",
+                                Documento: {
+                                    OriginalName: "CURP.jpg",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Permanente" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "RFC",
+                                FechaExpiracion: "No Aplica",
+                                Documento: {
+                                    OriginalName: "rfc.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Periodica" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: {
+                                        UnidadTiempo: { id: "Mes(es)" },
+                                        Cantidad: 2
+                                    }
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }
+                        ]
+                    },
+                    Representante: {
+                        Id: 1,
+                        Nombre: "DAVID",
+                        PrimerApellido: "MENDOZA",
+                        SegundoApellido: "ALANIS",
+                        NombreCompleto: "Representante David",
+                        RFC: "MEAD671015V21",
+                        CURP: "MEAD671015V5MDMDSL01",
+                        CorreoElectronico: "david.mendoza@gmail.com",
+                        Domicilio: {
+                            Calle: "Sur 69-A",
+                            NumeroExterior: "513",
+                            NumeroInterior: "",
+                            CodigoPostal: "09460",
+                            EntidadFederativa: "CDMX",
+                            MunicipioAlcaldia: "Iztapalapa",
+                            Colonia: "Justo Sierra"
+                        },
+                        DocumentosPersonales: [
+                            {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "INE",
+                                FechaExpiracion: "10/10/2021",
+                                Documento: {
+                                    OriginalName: "INE.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Fecha especifica" },
+                                    FechaExpiracion: "01/01/2020",
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "CURP",
+                                FechaExpiracion: "No Aplica",
+                                Documento: {
+                                    OriginalName: "CURP.jpg",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Periodica" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: {
+                                        UnidadTiempo: { id: "Mes(es)" },
+                                        Cantidad: 2
+                                    }
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "RFC",
+                                FechaExpiracion: "No Aplica",
+                                Documento: {
+                                    OriginalName: "rfc.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Permanente" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }
+                        ],
+                        DocumentosLegales: [
+                            {
+                                TipoDocumento: "Documento Legal",
+                                Descripcion: "Poder notarial",
+                                FechaExpiracion: "10/10/2021",
+                                Documento: {
+                                    OriginalName: "PoderNotarial.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: true,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Fecha especifica" },
+                                    FechaExpiracion: "01/01/2020",
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }, {
+                                TipoDocumento: "Identificacion Oficial",
+                                Descripcion: "INE",
+                                FechaExpiracion: "10/10/2021",
+                                Documento: {
+                                    OriginalName: "INE.pdf",
+                                    SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                    Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                },
+                                AdmiteAdicionales: false,
+                                DetallesVigencia: {
+                                    TipoVigencia: { id: "Permanente" },
+                                    FechaExpiracion: null,
+                                    Periodicidad: null
+                                },
+                                Nota: "Descripción del documento.",
+                                Instrucciones: "Instrucciones del documento."
+                            }
+                        ]
+                    },
+                    Representantes: [
+                        {
+                            Id: 1,
+                            Nombre: "DAVID",
+                            PrimerApellido: "MENDOZA",
+                            SegundoApellido: "ALANIS",
+                            RFC: "DVDS157896WE3",
+                            CURP: "DVDS784965MDMDSL01",
+                            Domicilio: {
+                                Calle: "Sur 69-A",
+                                NumeroExterior: "513",
+                                NumeroInterior: "",
+                                CodigoPostal: "09460",
+                                EntidadFederativa: "CDMX",
+                                MunicipioAlcaldia: "Iztapalapa",
+                                Colonia: "Justo Sierra"
+                            },
+                            DocumentosPersonales: [
+                                {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "INE",
+                                    FechaExpiracion: "10/10/2021",
+                                    Documento: {
+                                        OriginalName: "INE.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Permanente" },
+                                        FechaExpiracion: null,
+                                        Periodicidad: null
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }, {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "CURP",
+                                    FechaExpiracion: "No Aplica",
+                                    Documento: {
+                                        OriginalName: "CURP.jpg",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Periodica" },
+                                        FechaExpiracion: null,
+                                        Periodicidad: {
+                                            UnidadTiempo: { id: "Mes(es)" },
+                                            Cantidad: 2
+                                        }
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }, {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "RFC",
+                                    FechaExpiracion: "No Aplica",
+                                    Documento: {
+                                        OriginalName: "rfc.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Fecha especifica" },
+                                        FechaExpiracion: "01/01/2020",
+                                        Periodicidad: null
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }
+                            ],
+                            DocumentosLegales: [
+                                {
+                                    TipoDocumento: "Documento Legal",
+                                    Descripcion: "Poder notarial",
+                                    FechaExpiracion: "10/10/2021",
+                                    Documento: {
+                                        OriginalName: "PoderNotarial.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: true,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Permanente" },
+                                        FechaExpiracion: null,
+                                        Periodicidad: null
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }, {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "INE",
+                                    FechaExpiracion: "10/10/2021",
+                                    Documento: {
+                                        OriginalName: "INE.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Periodica" },
+                                        FechaExpiracion: null,
+                                        Periodicidad: {
+                                            UnidadTiempo: { id: "Mes(es)" },
+                                            Cantidad: 2
+                                        }
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }
+                            ]
+                        }, {
+                            Id: 2,
+                            Nombre: "JORGE",
+                            PrimerApellido: "MENDOZA",
+                            SegundoApellido: "ALANIS",
+                            RFC: "JIDW157896WE3",
+                            CURP: "JIDW784965MDMDSL01",
+                            Domicilio: {
+                                Calle: "San Sebastíán",
+                                NumeroExterior: "41",
+                                NumeroInterior: "",
+                                CodigoPostal: "02040",
+                                EntidadFederativa: "CDMX",
+                                MunicipioAlcaldia: "Azcapotzalco",
+                                Colonia: "Col del Maestro"
+                            },
+                            DocumentosPersonales: [
+                                {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "INE",
+                                    FechaExpiracion: "10/10/2021",
+                                    Documento: {
+                                        OriginalName: "INE.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Fecha especifica" },
+                                        FechaExpiracion: "01/01/2020",
+                                        Periodicidad: null
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }, {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "CURP",
+                                    FechaExpiracion: "No Aplica",
+                                    Documento: {
+                                        OriginalName: "CURP.jpg",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Periodica" },
+                                        FechaExpiracion: null,
+                                        Periodicidad: {
+                                            UnidadTiempo: { id: "Mes(es)" },
+                                            Cantidad: 2
+                                        }
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }, {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "RFC",
+                                    FechaExpiracion: "No Aplica",
+                                    Documento: {
+                                        OriginalName: "rfc.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Permanente" },
+                                        FechaExpiracion: null,
+                                        Periodicidad: null
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }
+                            ],
+                            DocumentosLegales: [
+                                {
+                                    TipoDocumento: "Documento Legal",
+                                    Descripcion: "Poder notarial",
+                                    FechaExpiracion: "10/10/2021",
+                                    Documento: {
+                                        OriginalName: "PoderNotarial.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: true,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Fecha especifica" },
+                                        FechaExpiracion: "01/01/2020",
+                                        Periodicidad: null
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }, {
+                                    TipoDocumento: "Identificacion Oficial",
+                                    Descripcion: "INE",
+                                    FechaExpiracion: "10/10/2021",
+                                    Documento: {
+                                        OriginalName: "INE.pdf",
+                                        SystemName: "af956a3e-72e0-4a63-ae9e-8167db4400a3.pdf",
+                                        Hash: "DF8ViP5zJIznfzagq9+Kqw=="
+                                    },
+                                    AdmiteAdicionales: false,
+                                    DetallesVigencia: {
+                                        TipoVigencia: { id: "Periodica" },
+                                        FechaExpiracion: null,
+                                        Periodicidad: {
+                                            UnidadTiempo: { id: "Mes(es)" },
+                                            Cantidad: 2
+                                        }
+                                    },
+                                    Nota: "Descripción del documento.",
+                                    Instrucciones: "Instrucciones del documento."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                Activity: {
+                    "refId": "804cfbed-8e96-4d2e-889c-eb52652c09fb",
+                    "name": "Evaluar la solicitud de afiliación",
+                    "catalogId": "FONACOT/I/A0003",
+                    "coustomViewer": "",
+                    "actionButtonsDisabled": true,
+                    "start": "2019-10-21T16:20:35.653",
+                    "end": "2019-10-21T16:28:32.01",
+                    "formInstanceId": "1eaa2c1b-66ab-4d67-a84f-ba62a53fcb79",
+                    "formReadOnly": false,
+                    "actionButtons": [],
+                    "flowInstanceSummary": {
+                        "refId": "11da1c70-5e3a-48bf-85f2-2e47e416e00c",
+                        "flowRefId": "35bc3c25-70f3-418c-a65c-50cfccec9229",
+                        "name": "Solicitud de afiliación",
+                        "key": "284/2019",
+                        "content": {},
+                        "created": "2019-10-21T15:36:30.97",
+                        "states": {},
+                        "procedureInstanceSummary": {
+                            "refId": "f228e671-8a9e-4d04-9524-3eb809357747",
+                            "procedureRefId": "7b5310ac-e8da-4c3e-a6be-d3ee7b3946c4",
+                            "name": "Solicitud de afiliación",
+                            "key": "IFT8-A2358",
+                            "content": {
+                                "UserContent": {
+                                    "codigoPostalCTField": "00000",
+                                    "domicilioCTField": "RAMACOI 8902 P SANTA MONICA",
+                                    "localidadCTField": "CD JUAREZ CHIHUAHUA",
+                                    "municipioCTField": "A83",
+                                    "nombreCTField": "SEPEMA S DE RL DE CV",
+                                    "numeroRegistroPatronalField": null,
+                                    "registroPatronalField": "B1234567890",
+                                    "rfcCTField": "CACX7605101P8",
+                                    "totalEventualesField": 4,
+                                    "totalEventualesFieldSpecified": true,
+                                    "totalEventualesCampoField": 0,
+                                    "totalEventualesCampoFieldSpecified": true,
+                                    "totalEventualesUrbanosField": 0,
+                                    "totalEventualesUrbanosFieldSpecified": true,
+                                    "totalPermanentesField": 1,
+                                    "totalPermanentesFieldSpecified": true,
+                                    "PropertyChanged": null
+                                },
+                                "SAIResponse": {
+                                    "folioAfiliacionField": 1604883,
+                                    "folioClienteField": "4535117",
+                                    "codigoRespuestaField": "1",
+                                    "descRespuestaField": "Ejecución de WS Exitosa",
+                                    "PropertyChanged": null
+                                },
+                                "BuroCURP": "HEGT761003MDFRNN09",
+                                "BuroDocumento": "cc1f52fa-2a98-4d67-bfb7-ff0da80e28b8.png",
+                                "BuroDocumentoCorrecto": true,
+                                "BuroMotivo": 1,
+                                "BuroMotivoDescripcion": "Este es el motivo",
+                                "BuroRequerimiento": "Este es el requerimiento",
+                                "BuroFundamento": "Este es el fundamento"
+                            },
+                            "start": "2020-03-05T16:20:31.107",
+                            "end": "0001-01-01T00:00:00",
+                            "environmentId": "63a88572-bb31-4c40-b672-7a3cccc26069",
+                            "states": {
+                                "credere": "Si",
+                                "external": "en espera de cumpir antigüedad",
+                                "principal": "Inicio de operaciones desfavorable",
+                                "scene": "Inicio de operaciones desfavorable",
+                                "wizard": "3"
+                            },
+                            "formInstances": {
+                                "Solicitud": "2a5e2544-cb18-4a02-a1c5-ccbdd568e61f",
+                                //"SolicitudPrevia": "2a5e2544-cb18-4a02-a1c5-ccbdd568e61f"
+                            },
+                            "documentsSignedZiped":
+                                "8d0b3d89-8a17-4afb-8397-12e48b4b7a91.pdf,13918947-95d0-4ff8-b269-bcceb48953b9.pdf,13918947-95d0-4ff8-b269-bcceb48953b9.xml,626082f8-99d6-4194-80f5-1db48c6bd0b7.pdf,626082f8-99d6-4194-80f5-1db48c6bd0b7.xml,9f8ab2e5-f982-4e99-b376-1a35b205fb12.pdf,9f8ab2e5-f982-4e99-b376-1a35b205fb12.xml,3dced5f8-38a0-42ac-ad65-2fa501d86b41.pdf",
+                            "documentsSigned": {
+                                "CartaAceptacion": [
+                                    {
+                                        "SystemName": "8d0b3d89-8a17-4afb-8397-12e48b4b7a91.pdf",
+                                        "OriginalName": "Carta de aceptación",
+                                        "HashCode": "",
+                                        "Creted": false
+                                    }
+                                ],
+                                "AcuseTerminosCondiciones": [
+                                    {
+                                        "SystemName": "13918947-95d0-4ff8-b269-bcceb48953b9.pdf",
+                                        "OriginalName": "Acuse de terminos y condiciones.pdf",
+                                        "HashCode": "",
+                                        "Creted": false
+                                    },
+                                    {
+                                        "SystemName": "13918947-95d0-4ff8-b269-bcceb48953b9.xml",
+                                        "OriginalName": "Acuse de terminos y condiciones.xml",
+                                        "HashCode": "",
+                                        "Creted": false
+                                    }
+                                ],
+                                "AcuseSolicitud": [
+                                    {
+                                        "SystemName": "626082f8-99d6-4194-80f5-1db48c6bd0b7.pdf",
+                                        "OriginalName": "Acuse de solicitud de afiliación.pdf",
+                                        "HashCode": "",
+                                        "Creted": false
+                                    },
+                                    {
+                                        "SystemName": "626082f8-99d6-4194-80f5-1db48c6bd0b7.xml",
+                                        "OriginalName": "Acuse de solicitud de afiliación.xml",
+                                        "HashCode": "",
+                                        "Creted": false
+                                    }
+                                ],
+                                "Convenio": [
+                                    {
+                                        "SystemName": "9f8ab2e5-f982-4e99-b376-1a35b205fb12.pdf",
+                                        "OriginalName": "Convenio de afiliación.pdf",
+                                        "HashCode": "",
+                                        "Creted": false
+                                    },
+                                    {
+                                        "SystemName": "9f8ab2e5-f982-4e99-b376-1a35b205fb12.xml",
+                                        "OriginalName": "Convenio de afiliación.xml",
+                                        "HashCode": "",
+                                        "Creted": false
+                                    }
+                                ],
+                                "Resolucion": [
+                                    {
+                                        "OriginalName": "Resolución Negativa Inicio Operaciones.pdf",
+                                        "SystemName": "3dced5f8-38a0-42ac-ad65-2fa501d86b41.pdf",
+                                        "Hash": "PZyjcoq2kKaLVqWHQiYdZw==",
+                                        "ToPDF": "true"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "beforeSignScript": "",
+                    "documentsSigned": {}
+                }
+            };
+
+            $(form).on('get_started',
+                function(event) {
+                });
+
+            $(form).on('get_finished',
+                function(event, jqXHR, textStatus, errorThrown) {
+                    // Aquí se puede colocar el termino del loading
+                    if (jqXHR.ReadOnly) {
+                        $('#cmdGuardar').hide();
+                        $('#cmdEliminar').hide();
+                        $('#cmdEnviar').hide();
+                        if (jsonPreload.ObjectJson.Configuration.FormInstanceId === '')
+                            $('#cmdPreview').hide();
+                        else
+                            $('#cmdPreview').show();
+
+                        if (jsonPreload.ObjectJson.Configuration.FormInstanceId === '') {
+                            $('#cmdPreview').hide();
+                            $('#cmdDesistimiento').hide();
+                        }
+
+                    } else {
+                        $('#cmdDesistimiento').hide();
+                        $('#cmdAcuse').hide();
+                        $('#cmdPreview').hide();
+                    }
+                });
+
+            // Evento click del botón para save
+            $('#cmdGuardar').click(function() {
+                // Aquí se puede iniciar un loading para guardar
+                form.save();
+            });
+
+            $(form).on('save_completed',
+                function(event, saved, textStatus, jqXHR, objeto) {
+                    // La variable "guardado" regresa true cuando fue correcto
+                    if (jsonPreload.ObjectJson.Configuration.FormInstanceId === '') {
+                        $('#cmdPreview').hide();
+                    } else {
+                        $('#cmdPreview').show();
+                    }
+                });
+
+            $(form).on('save_finished',
+                function(event, jqXHR, textStatus, errorThrown) {
+                    // Aquí se puede colocar el termino del loading para save
+                });
+
+            // Evento click del botón para eliminar
+            $('#cmdEliminar').click(function() {
+                if (confirm("¿Está seguro que desea eliminar?"))
+                    form.delete();
+            });
+
+            $('#cmdCerrar').click(function() {
+                if (confirm("¿Está seguro que desea salir del trámite?"))
+                    window.location.href = "@ViewBag.Parameters.urlBaseAseaPortalReg" + "/management-regulated";
+            });
+
+            $('#cmdAcuse').click(function() {
+                var urlDesist = urlVerify + "/downloadable?id=" + form.attr("data-instance-id");
+                window.open(urlDesist, '_blank');
+            });
+
+            $('#cmdPreview').click(function() {
+                var urlDesist = urlVerify +
+                    "/previewer/?instanceId=" +
+                    form.attr("data-instance-id") +
+                    "&templateId=03158F50-7397-4B9D-A915-D63765DC07C0";
+                window.open(urlDesist, '_blank');
+            });
+
+            $(form).on('delete_started',
+                function(event) {
+                    // Aquí se puede iniciar un loading para eliminar
+                });
+
+            $(form).on('delete_completed',
+                function(event, removed, textStatus, jqXHR) {
+                    if (removed)
+                        alert("Trámite eliminado correctamente");
+                    else
+                        alert("Error al eliminar");
+
+                    window.location.href = "@ViewBag.Parameters.urlBaseAseaPortalReg" + "/management-regulated";
+                });
+
+            $(form).on('delete_finished',
+                function(event, jqXHR, textStatus, errorThrown) {
+                    // Aquí se puede colocar el termino del loading para eliminar
+                });
+
+            // Sucede cuando se detona un error en los llamados ajax
+            $(form).on('form_error',
+                function(event, jqXHR, textStatus, errorThrown) {
+                    // Aquí se coloca el despliegue de cualquier error
+                });
+
+            $(form).on('removed',
+                function(event, removed, textStatus, jqXHR) {
+                    if (removed)
+                        alert("Trámite eliminado correctamente");
+                    else
+                        alert("Error al eliminar");
+
+                    window.location.href = "@ViewBag.Parameters.urlBaseAseaPortalReg" + "/management-regulated";
+                });
+
+            $('#cmdEnviar').click(function() {
+                // Aquí se puede iniciar un loading para guardar
+                form.validate();
+            });
+
+            $('#cmdEnviarFinanzas').click(function() {
+                // Aquí se puede iniciar un loading para guardar
+                form.validate();
+            });
+
+            //Después de cambiar la instancia a solo lectura realiza la apertura de la ventana modal.
+            $(form).on('send_completed',
+                function(event, jqXHR, textStatus, errorThrown) {
+                    $("#signature").modal('show');
+                });
+
+            // Sucede cuando se valida los campos
+            $(form).on('validate_result',
+                function(event, valido) {
+                    if (valido)
+                        form.send();
+                });
+
+            $(form).on('loaded',
+                function(event, init) {
+                    init ? init(jsonPreload) : form.initialize(jsonPreload);
+                });
+
+        });
+    </script>
+}

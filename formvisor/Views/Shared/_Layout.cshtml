@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    @RenderSection("styles", required: false)
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="pragma" content="no-cache">
+
+    <link rel="icon" type="image/x-icon" href="https://framework-gb.cdn.gob.mx/favicon.ico">
+    <link rel="stylesheet" href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" />
+    <link href="~/Content/styles.min.css" rel="stylesheet" />
+
+    <title>@ViewBag.title</title>
+    <link href="~/Content/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/fonts.css" rel="stylesheet" />
+    <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
+    <script src="https://kit.fontawesome.com/2eab8f99c0.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,600,700&amp;subset=latin" media="all" />
+    <script type="text/javascript" id="jquery" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    @RenderSection("scripts_iniciales", required: false)
+    <script type='text/javascript'>
+
+        var appInsights = window.appInsights ||
+            function (config) {
+                function r(config) {
+                    t[config] = function () {
+                        var i = arguments;
+                        t.queue.push(function () { t[config].apply(t, i) });
+                    };
+                }
+
+                var t = { config: config }, u = document, e = window, o = 'script', s = u.createElement(o), i, f;
+                for (s.src =
+                    config.url || '//az416426.vo.msecnd.net/scripts/a/ai.0.js',
+                    u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i =
+                    ['Event', 'Exception', 'Metric', 'PageView', 'Trace', 'Ajax'];
+                    i.length;
+                ) r('track' + i.pop());
+                return r('setAuthenticatedUserContext'), r('clearAuthenticatedUserContext'),
+                    config.disableExceptionTracking ||
+                    (i = 'onerror', r('_' + i), f = e[i], e[i] = function (config, r, u, e, o) {
+                        var s = f && f(config, r, u, e, o);
+                        return s !== !0 && t['_' + i](config, r, u, e, o), s;
+                    }), t;
+            }({
+                instrumentationKey: '52e12103-9fa1-44cd-b4f8-9a552338c8c4'
+            });
+
+        window.appInsights = appInsights;
+        appInsights.trackPageView();
+
+
+        /**/</script>
+</head>
+<body>
+    <header><nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbarMainCollapse"><span class="sr-only">Interruptor de Navegación</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="http://www.gob.mx/"><img src="https://framework-gb.cdn.gob.mx/assets/images/gobmxlogo-2.svg" width="75" height="23" alt="gob.mx"></a></div><div class="collapse navbar-collapse" id="navbarMainCollapse"><ul class="nav navbar-nav navbar-right"><li><a href="http://www.gob.mx/tramites">Trámites</a></li><li><a href="http://www.gob.mx/gobierno">Gobierno</a></li><li><a href="http://www.gob.mx/participa">Participa</a></li><li><a href="http://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="icon-search"></i></a></li></ul></div></div></nav></header>
+    <main role="main">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h2 id="procedureName">@ViewBag.procedureName</h2>
+                </div>
+                <div class="col-sm-4">
+                    <div class="user-credencials">
+                        <ul class="list-unstyled">
+                            <li>
+                                <span class="user-credencials__name ng-binding"> <strong>Bienvenido: </strong> @User.Identity.Name</span>
+                                <button class="btn btn-link pull-right" href="javascript:document.getElementById('logoutForm').submit()" onclick="javascript:document.getElementById('logoutForm').submit();"><br />Salir</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                @*@using (Html.BeginForm("SignOut", "Account", FormMethod.Post, new { id = "logoutForm" })) { }*@
+            </div><br /><br /><br /><br />
+            <div class="row">
+                <div class="col-sm-12" id="divMainContainer">
+                    @RenderBody()
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="main-footer"><div class="list-info"><div class="container"><div class="row"><div class="col-sm-4"><h5>Enlaces</h5><ul><li><a href="http://www.gob.mx/accesibilidad">Accesibilidad</a></li><li><a href="http://www.gob.mx/privacidad">Política de privacidad</a></li><li><a href="http://www.gob.mx/terminos">Términos y Condiciones</a></li><li><a href="http://www.ordenjuridico.gob.mx" target="_blank">Marco Jurídico</a></li><li><a href="http://portaltransparencia.gob.mx" target="_blank">Portal de Obligaciones de Transparencia</a></li><li><a href="https://www.infomex.org.mx/gobiernofederal/home.action" target="_blank">Sistema Infomex</a></li><li><a href="http://inicio.ifai.org.mx/SitePages/ifai.aspx" target="_blank">INAI</a></li></ul></div><div class="col-sm-4"><h5>¿Qué es gob.mx?</h5><p>Es el portal único de trámites, información y participación ciudadana.</p><p><a href="http://www.gob.mx/que-es-gobmx">Leer más</a></p><ul><li><a href="http://www.gob.mx/en/index">English</a></li><li><a href="http://www.gob.mx/temas">Temas</a></li><li><a href="http://reformas.gob.mx" target="_blank">Reformas</a></li></ul></div><div class="col-sm-4"><h5>Contacto</h5><p>Insurgentes Sur 1735, Col. Guadalupe Inn.<br>Delegación Álvaro Obregón<br>México, D.F. C.P. 01020</p> <p>gobmx@funcionpublica.gob.mx</p><p><a href="http://www.gob.mx/atencion">Atención Ciudadana</a></p><p><a href="http://www.gob.mx/tramites/ficha/SFP54">Quejas y denuncias</a></p></div></div><div class="row"><div class="col-sm-4"><form role="form" id="subscribete"><label>Mantente informado. Suscríbete.</label><div class="form-group-icon"><input type="text" class="form-control" id="email" name="email" placeholder="Ingresa tu correo electrónico"><button id="subscribe" type="button" class="blue-right btn"><i class="icon-caret-right"></i></button></div><div class="message-subscribe">Ingrese un email válido</div></form></div><div class="col-sm-4 col-sm-offset-4"><h5>Síguenos en</h5><ul class="list-inline"><li><a class="social-icon facebook" target="_blanc" href="https://www.facebook.com/gobmx">facebook</a></li><li><a class="social-icon twitter" target="_blanc" href="https://twitter.com/gobmx">twitter</a></li></ul></div></div></div></div><div class="container"><div class="row"><div class="col-sm-4"><img class="gobmx-footer" src="https://framework-gb.cdn.gob.mx/assets/images/gobmxlogo-2.svg" width="126" height="39" alt="gob.mx"></div><div class="col-sm-4 col-sm-offset-4"></div></div></div></footer>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.message-subscribe').addClass("hidden");
+            $('body').on('click', '#subscribe', function (e) {
+                e.preventDefault();
+
+                var re = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                var dataString = $('#email').serialize();
+                var email = $('#email').val();
+                var url = "//www.gob.mx/subscribe";
+                var successMessage = 'Agradecemos tu registro dentro de gob.mx. De esta manera estar&aacute;s informado sobre las principales acciones y decisiones del Gobierno de la Rep&uacute;blica.<br><br>Gracias por tu inter&eacute;s y colaboraci&oacute;n. Juntos construimos <a href="/">gob.mx</a>';
+                var registeredMessage = 'Este correo electr&oacute;nico ya ha sido registrado.';
+                var failMessage = 'No se pudo registrar el correo electr&oacute;nico.';
+                var validEmail = 'Ingrese un email v&aacute;lido';
+
+                if ($.trim(email).length === 0 || re.test(email) === false) {
+                    $('.message-subscribe').removeClass("hidden").html(validEmail);
+                    return false;
+                } else {
+                    $('.message-subscribe').addClass("hidden").html();
+
+                    $.ajax({
+                        type: 'POST',
+                        data: "email=" + $('#email').val(),
+                        dataType: 'json',
+                        url: url
+                    }).done(function (data) {
+                        if (data.status === 'error') {
+                            $('.message-subscribe').removeClass("hidden").html(registeredMessage);
+                        } else {
+                            $('#email').val('');
+                            $('#email').prop('disabled', true);
+                            $('.message-subscribe').removeClass("hidden").html(successMessage);
+                        }
+                    }).fail(function () {
+                        $('.message-subscribe').removeClass("hidden").html(failMessage);
+                    });
+                }
+                return false;
+            });
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>
